@@ -1,8 +1,9 @@
 # comfy.py
 import requests
 import json
+import time
 from config import COMFY_URL
-
+from config import COMFY_URL, PROMPT_FILE
 
 def test_connection():
 
@@ -52,3 +53,33 @@ def submit_workflow(workflow: dict) -> str:
     data = response.json()
 
     return data["prompt_id"]
+
+def wait_until_finished(prompt_id: str):
+
+    while True:
+
+        response = requests.get(
+            f"{COMFY_URL}/history/{prompt_id}"
+        )
+
+        data = response.json()
+
+        if prompt_id in data:
+            return data[prompt_id]
+
+        time.sleep(1)
+
+def get_prompt_text(history):
+
+    try:
+
+        return history["outputs"]["15"]["text"][0]
+
+    except Exception:
+
+        return None
+    
+def read_prompt():
+
+    with open(PROMPT_FILE, "r", encoding="cp1252") as f:
+        return f.read()

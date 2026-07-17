@@ -1,9 +1,13 @@
+import json
 from comfy import (
     test_connection,
     load_workflow,
     set_image,
-    submit_workflow
+    submit_workflow,
+    wait_until_finished,
+    read_prompt
 )
+
 
 from config import WORKFLOW_QWEN
 
@@ -28,3 +32,11 @@ if __name__ == "__main__":
     print("Workflow gestartet")
 
     print(prompt_id)
+
+history = wait_until_finished(prompt_id)
+
+prompt = read_prompt()
+
+print()
+print("===== Prompt =====")
+print(json.dumps(history, indent=2))

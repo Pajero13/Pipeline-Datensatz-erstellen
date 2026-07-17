@@ -34,7 +34,7 @@
       "repetition_penalty": 1.2,
       "frame_count": 16,
       "keep_model_loaded": true,
-      "seed": 1,
+      "seed": 2982681274,
       "image": [
         "13",
         0
@@ -45,16 +45,20 @@
       "title": "QwenVL (Advanced)"
     }
   },
-  "15": {
+  "16": {
     "inputs": {
+      "root_dir": "output",
+      "file": "prompt.txt",
+      "append": "overwrite",
+      "insert": true,
       "text": [
         "14",
         0
       ]
     },
-    "class_type": "ShowText|pysssss",
+    "class_type": "SaveText|pysssss",
     "_meta": {
-      "title": "Show Text 🐍"
+      "title": "Save Text 🐍"
     }
   }
 }

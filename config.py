@@ -11,3 +11,5 @@ PROMPT_DIR = "prompts"
 OUTPUT_DIR = "generated"
 
 LOG_DIR = "logs"
+
+PROMPT_FILE = r"C:\Users\Andrin\Documents\Pinokio\api\comfy.git\app\output\prompt.txt"
