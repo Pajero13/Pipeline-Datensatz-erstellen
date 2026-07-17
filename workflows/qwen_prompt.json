@@ -1,0 +1,60 @@
+{
+  "12": {
+    "inputs": {
+      "batch_index": 0,
+      "length": 1
+    },
+    "class_type": "ImageFromBatch",
+    "_meta": {
+      "title": "ImageFromBatch"
+    }
+  },
+  "13": {
+    "inputs": {
+      "image": "IMG_1455.jpg"
+    },
+    "class_type": "LoadImage",
+    "_meta": {
+      "title": "Load Image"
+    }
+  },
+  "14": {
+    "inputs": {
+      "model_name": "Qwen3-VL-2B-Instruct",
+      "quantization": "None (FP16)",
+      "attention_mode": "auto",
+      "use_torch_compile": false,
+      "device": "auto",
+      "preset_prompt": "🖼️ Detailed Description",
+      "custom_prompt": "",
+      "max_tokens": 512,
+      "temperature": 0.6,
+      "top_p": 0.9,
+      "num_beams": 1,
+      "repetition_penalty": 1.2,
+      "frame_count": 16,
+      "keep_model_loaded": true,
+      "seed": 1,
+      "image": [
+        "13",
+        0
+      ]
+    },
+    "class_type": "AILab_QwenVL_Advanced",
+    "_meta": {
+      "title": "QwenVL (Advanced)"
+    }
+  },
+  "15": {
+    "inputs": {
+      "text": [
+        "14",
+        0
+      ]
+    },
+    "class_type": "ShowText|pysssss",
+    "_meta": {
+      "title": "Show Text 🐍"
+    }
+  }
+}

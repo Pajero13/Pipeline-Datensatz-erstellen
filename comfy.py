@@ -1,5 +1,6 @@
+# comfy.py
 import requests
-
+import json
 from config import COMFY_URL
 
 
@@ -22,3 +23,32 @@ def test_connection():
         print("❌ Verbindung fehlgeschlagen")
 
         print(e)
+
+
+def load_workflow(path: str) -> dict:
+    with open(path, "r", encoding="utf-8") as f:
+        return json.load(f)
+    
+
+def set_image(workflow: dict, image_name: str) -> dict:
+
+    workflow["13"]["inputs"]["image"] = image_name
+
+    return workflow
+
+def submit_workflow(workflow: dict) -> str:
+
+    payload = {
+        "prompt": workflow
+    }
+
+    response = requests.post(
+        f"{COMFY_URL}/prompt",
+        json=payload
+    )
+
+    response.raise_for_status()
+
+    data = response.json()
+
+    return data["prompt_id"]
