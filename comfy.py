@@ -83,3 +83,15 @@ def read_prompt():
 
     with open(PROMPT_FILE, "r", encoding="cp1252") as f:
         return f.read()
+    
+def set_prompt(workflow: dict, prompt: str) -> dict:
+
+    workflow["6"]["inputs"]["text"] = prompt
+
+    return workflow
+
+def set_filename(workflow: dict, filename: str) -> dict:
+
+    workflow["9"]["inputs"]["filename_prefix"] = filename
+
+    return workflow

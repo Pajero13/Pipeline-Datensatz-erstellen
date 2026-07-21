@@ -4,6 +4,8 @@ COMFY_URL = "http://127.0.0.1:8188"
 
 WORKFLOW_QWEN = "workflows/qwen_prompt.json"
 
+WORKFLOW_FLUX = "workflows/flux1_generate_image.json"
+
 INPUT_DIR = "preprocessed"
 
 PROMPT_DIR = "prompts"
