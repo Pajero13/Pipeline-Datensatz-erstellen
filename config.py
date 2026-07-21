@@ -8,6 +8,8 @@ WORKFLOW_QWEN = "workflows/qwen_prompt.json"
 
 WORKFLOW_FLUX = "workflows/flux1_generate_image.json"
 
+TEMP_DIR = "temp"
+
 INPUT_DIR = "input"
 
 PROMPT_DIR = "prompts"

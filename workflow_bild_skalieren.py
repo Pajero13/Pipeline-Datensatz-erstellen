@@ -13,6 +13,7 @@ from config import (
     INPUT_DIR,
     PREPROCESSED_DIR,
 )
+from image_utils import normalize_image
 
 from pathlib import Path
 
@@ -33,6 +34,8 @@ if __name__ == "__main__":
 
         print(f"\nVerarbeite: {image.name}")
 
+        normalized = normalize_image(image)
+
         workflow = load_workflow(
             WORKFLOW_BILD_SKALIEREN
         )
@@ -40,7 +43,7 @@ if __name__ == "__main__":
         workflow = set_image_path(
             workflow,
             "5",
-            str(image.resolve())
+            str(normalized.resolve())
         )
         workflow = set_output_path(
             workflow,

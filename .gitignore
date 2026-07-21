@@ -19,6 +19,7 @@ input/
 preprocessed/
 prompts/
 generated/
+temp/
 
 # Temporäre Dateien
 *.tmp
