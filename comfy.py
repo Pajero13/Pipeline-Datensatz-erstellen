@@ -90,8 +90,14 @@ def set_prompt(workflow: dict, prompt: str) -> dict:
 
     return workflow
 
-def set_filename(workflow: dict, filename: str) -> dict:
+def set_image(workflow: dict, node_id: str, image_name: str) -> dict:
 
-    workflow["9"]["inputs"]["filename_prefix"] = filename
+    workflow[node_id]["inputs"]["image"] = image_name
+
+    return workflow
+
+def set_filename(workflow: dict, node_id: str, filename: str) -> dict:
+
+    workflow[node_id]["inputs"]["filename_prefix"] = filename
 
     return workflow

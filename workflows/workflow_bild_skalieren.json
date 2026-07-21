@@ -1,0 +1,48 @@
+{
+  "1": {
+    "inputs": {
+      "image": "IMG_1455.jpg"
+    },
+    "class_type": "LoadImage",
+    "_meta": {
+      "title": "Load Image"
+    }
+  },
+  "2": {
+    "inputs": {
+      "custom_width": 384,
+      "custom_height": 384,
+      "megapixels": 0,
+      "scale_by": 1,
+      "resize_mode": "longest_side",
+      "resize_value": 0,
+      "upscale_method": "lanczos",
+      "device": "gpu",
+      "divisible_by": 2,
+      "output_mode": "crop",
+      "crop_position": "center",
+      "pad_color": "#FFFFFF",
+      "image": [
+        "1",
+        0
+      ]
+    },
+    "class_type": "AILab_ImageResize",
+    "_meta": {
+      "title": "Image Resize (RMBG) 🖼️🎭"
+    }
+  },
+  "3": {
+    "inputs": {
+      "filename_prefix": "ComfyUI",
+      "images": [
+        "2",
+        0
+      ]
+    },
+    "class_type": "SaveImage",
+    "_meta": {
+      "title": "Save Image"
+    }
+  }
+}

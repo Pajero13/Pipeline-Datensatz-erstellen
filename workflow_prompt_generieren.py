@@ -21,9 +21,10 @@ if __name__ == "__main__":
     workflow = load_workflow(WORKFLOW_QWEN)
 
     workflow = set_image(
-        workflow,
-        "IMG_1455.jpg"
-    )
+    workflow,
+    "13",
+    "IMG_1455.jpg"
+)
 
     prompt_id = submit_workflow(workflow)
 

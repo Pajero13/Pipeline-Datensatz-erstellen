@@ -25,6 +25,7 @@ prompt = read_prompt()
 
 workflow = set_filename(
     workflow,
+    "9",
     "IMG_1455"
 )
 

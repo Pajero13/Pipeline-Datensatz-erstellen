@@ -2,6 +2,8 @@
 
 COMFY_URL = "http://127.0.0.1:8188"
 
+WORKFLOW_BILD_SKALIEREN = "workflows/workflow_bild_skalieren.json"
+
 WORKFLOW_QWEN = "workflows/qwen_prompt.json"
 
 WORKFLOW_FLUX = "workflows/flux1_generate_image.json"
