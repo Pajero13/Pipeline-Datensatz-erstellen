@@ -1,14 +1,27 @@
 from comfy import (
     test_connection,
     load_workflow,
-    set_image,
     set_filename,
     submit_workflow,
     wait_until_finished,
+    set_image_path,
+    set_output_path,
 )
 
-from config import WORKFLOW_BILD_SKALIEREN
+from config import (
+    WORKFLOW_BILD_SKALIEREN,
+    INPUT_DIR,
+    PREPROCESSED_DIR,
+)
 
+from pathlib import Path
+
+def get_images():
+
+    return sorted(
+    list(Path(INPUT_DIR).glob("*.jpg")) +
+    list(Path(INPUT_DIR).glob("*.jpeg"))
+)
 
 if __name__ == "__main__":
 
@@ -16,34 +29,34 @@ if __name__ == "__main__":
 
     test_connection()
 
-    workflow = load_workflow(
-        WORKFLOW_BILD_SKALIEREN
-    )
+    for image in get_images():
 
-    workflow = set_image(
-        workflow,
-        "1",
-        "IMG_1455.jpg"
-    )
+        print(f"\nVerarbeite: {image.name}")
 
-    workflow = set_filename(
-        workflow,
-        "3",
-        "IMG_1455"
-    )
+        workflow = load_workflow(
+            WORKFLOW_BILD_SKALIEREN
+        )
 
-    prompt_id = submit_workflow(
-        workflow
-    )
+        workflow = set_image_path(
+            workflow,
+            "5",
+            str(image.resolve())
+        )
+        workflow = set_output_path(
+            workflow,
+            "11",
+            PREPROCESSED_DIR
+        )
 
-    print()
+        workflow = set_filename(
+            workflow,
+            "11",
+            image.stem
+        )
+        prompt_id = submit_workflow(
+            workflow
+        )
 
-    print("Workflow gestartet")
+        wait_until_finished(prompt_id)
 
-    print(prompt_id)
-
-    wait_until_finished(prompt_id)
-
-    print()
-
-    print("Bild erfolgreich skaliert.")
+        print("✓ Fertig")

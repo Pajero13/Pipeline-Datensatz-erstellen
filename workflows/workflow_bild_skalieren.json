@@ -1,13 +1,4 @@
 {
-  "1": {
-    "inputs": {
-      "image": "IMG_1455.jpg"
-    },
-    "class_type": "LoadImage",
-    "_meta": {
-      "title": "Load Image"
-    }
-  },
   "2": {
     "inputs": {
       "custom_width": 384,
@@ -17,13 +8,13 @@
       "resize_mode": "longest_side",
       "resize_value": 0,
       "upscale_method": "lanczos",
-      "device": "gpu",
+      "device": "cpu",
       "divisible_by": 2,
       "output_mode": "crop",
       "crop_position": "center",
       "pad_color": "#FFFFFF",
       "image": [
-        "1",
+        "5",
         0
       ]
     },
@@ -32,17 +23,52 @@
       "title": "Image Resize (RMBG) 🖼️🎭"
     }
   },
-  "3": {
+  "5": {
     "inputs": {
+      "image": "C:\\Users\\Andrin\\Documents\\Maturaarbeit_W11WS16\\parktisches_Experiment\\Datensatz\\Daten\\Pipeline-Datensatz-erstellen\\input\\IMG_4890.jpeg",
+      "custom_width": 0,
+      "custom_height": 0
+    },
+    "class_type": "VHS_LoadImagePath",
+    "_meta": {
+      "title": "Load Image (Path) 🎥🅥🅗🅢"
+    }
+  },
+  "10": {
+    "inputs": {
+      "batch_index": 0,
+      "length": 1
+    },
+    "class_type": "ImageFromBatch",
+    "_meta": {
+      "title": "ImageFromBatch"
+    }
+  },
+  "11": {
+    "inputs": {
+      "output_path": "C:\\Users\\Andrin\\Documents\\Maturaarbeit_W11WS16\\parktisches_Experiment\\Datensatz\\Daten\\Pipeline-Datensatz-erstellen\\preprocessed",
       "filename_prefix": "ComfyUI",
+      "filename_delimiter": "_",
+      "filename_number_padding": 4,
+      "filename_number_start": "false",
+      "extension": "png",
+      "dpi": 300,
+      "quality": 100,
+      "optimize_image": "true",
+      "lossless_webp": "false",
+      "overwrite_mode": "prefix_as_filename",
+      "show_history": "false",
+      "show_history_by_prefix": "true",
+      "embed_workflow": "false",
+      "show_previews": "true",
       "images": [
         "2",
         0
       ]
     },
-    "class_type": "SaveImage",
+    "class_type": "Image Save",
     "_meta": {
-      "title": "Save Image"
+      "title": "Image Save"
     }
   }
 }

@@ -37,6 +37,12 @@ def set_image(workflow: dict, image_name: str) -> dict:
 
     return workflow
 
+def set_image_path(workflow: dict, node_id: str, image_path: str) -> dict:
+
+    workflow[node_id]["inputs"]["image"] = image_path
+
+    return workflow
+
 def submit_workflow(workflow: dict) -> str:
 
     payload = {
@@ -93,6 +99,18 @@ def set_prompt(workflow: dict, prompt: str) -> dict:
 def set_image(workflow: dict, node_id: str, image_name: str) -> dict:
 
     workflow[node_id]["inputs"]["image"] = image_name
+
+    return workflow
+
+def set_filename(workflow: dict, node_id: str, filename: str) -> dict:
+
+    workflow[node_id]["inputs"]["filename_prefix"] = filename
+
+    return workflow
+
+def set_output_path(workflow: dict, node_id: str, path: str) -> dict:
+
+    workflow[node_id]["inputs"]["output_path"] = path
 
     return workflow
 

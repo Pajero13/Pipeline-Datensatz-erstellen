@@ -8,11 +8,17 @@ WORKFLOW_QWEN = "workflows/qwen_prompt.json"
 
 WORKFLOW_FLUX = "workflows/flux1_generate_image.json"
 
-INPUT_DIR = "preprocessed"
+INPUT_DIR = "input"
 
 PROMPT_DIR = "prompts"
 
-OUTPUT_DIR = "generated"
+PREPROCESSED_DIR = (
+    r"C:\Users\Andrin\Documents\Maturaarbeit_W11WS16"
+    r"\parktisches_Experiment\Datensatz\Daten"
+    r"\Pipeline-Datensatz-erstellen\preprocessed"
+)
+
+OUTPUT_DIR = "output"
 
 LOG_DIR = "logs"
 
