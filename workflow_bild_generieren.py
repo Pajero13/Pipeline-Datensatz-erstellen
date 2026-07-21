@@ -4,6 +4,8 @@ from comfy import (
     set_prompt,
     set_filename,
     submit_workflow,
+    wait_until_finished,
+    read_prompt
 )
 
 from config import WORKFLOW_FLUX
@@ -18,3 +20,26 @@ if __name__ == "__main__":
     workflow = load_workflow(
         WORKFLOW_FLUX
     )
+
+prompt = read_prompt()
+
+workflow = set_filename(
+    workflow,
+    "IMG_1455"
+)
+
+prompt_id = submit_workflow(
+    workflow
+)
+
+print()
+
+print("Workflow gestartet")
+
+print(prompt_id)
+
+wait_until_finished(prompt_id)
+
+print()
+
+print("Bild erfolgreich generiert.")
