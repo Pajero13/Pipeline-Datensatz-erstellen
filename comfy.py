@@ -54,7 +54,11 @@ def submit_workflow(workflow: dict) -> str:
         json=payload
     )
 
-    response.raise_for_status()
+    if response.status_code != 200:
+
+        print(response.text)
+
+        response.raise_for_status()
 
     data = response.json()
 
@@ -117,5 +121,46 @@ def set_output_path(workflow: dict, node_id: str, path: str) -> dict:
 def set_filename(workflow: dict, node_id: str, filename: str) -> dict:
 
     workflow[node_id]["inputs"]["filename_prefix"] = filename
+
+    return workflow
+
+def set_text_directory(
+    workflow: dict,
+    node_id: str,
+    directory: str
+) -> dict:
+
+    workflow[node_id]["inputs"]["root_dir"] = directory
+
+    return workflow
+
+
+def set_text_filename(
+    workflow: dict,
+    node_id: str,
+    filename: str
+) -> dict:
+
+    workflow[node_id]["inputs"]["file"] = filename
+
+    return workflow
+
+def set_text_output_path(
+    workflow: dict,
+    node_id: str,
+    path: str
+) -> dict:
+
+    workflow[node_id]["inputs"]["output_file_path"] = path
+
+    return workflow
+
+def set_text_filename(
+    workflow: dict,
+    node_id: str,
+    filename: str
+) -> dict:
+
+    workflow[node_id]["inputs"]["file_name"] = filename
 
     return workflow

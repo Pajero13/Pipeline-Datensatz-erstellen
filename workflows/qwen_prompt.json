@@ -1,23 +1,4 @@
 {
-  "12": {
-    "inputs": {
-      "batch_index": 0,
-      "length": 1
-    },
-    "class_type": "ImageFromBatch",
-    "_meta": {
-      "title": "ImageFromBatch"
-    }
-  },
-  "13": {
-    "inputs": {
-      "image": "IMG_1455.jpg"
-    },
-    "class_type": "LoadImage",
-    "_meta": {
-      "title": "Load Image"
-    }
-  },
   "14": {
     "inputs": {
       "model_name": "Qwen3-VL-2B-Instruct",
@@ -34,9 +15,9 @@
       "repetition_penalty": 1.2,
       "frame_count": 16,
       "keep_model_loaded": true,
-      "seed": 2982681274,
+      "seed": 1817891135,
       "image": [
-        "13",
+        "17",
         0
       ]
     },
@@ -45,20 +26,31 @@
       "title": "QwenVL (Advanced)"
     }
   },
-  "16": {
+  "17": {
     "inputs": {
-      "root_dir": "output",
-      "file": "prompt.txt",
-      "append": "overwrite",
-      "insert": true,
+      "image": "C:\\Users\\Andrin\\Documents\\Maturaarbeit_W11WS16\\parktisches_Experiment\\Datensatz\\Daten\\Pipeline-Datensatz-erstellen\\preprocessed\\IMG_5462.png",
+      "custom_width": 0,
+      "custom_height": 0
+    },
+    "class_type": "VHS_LoadImagePath",
+    "_meta": {
+      "title": "Load Image (Path) 🎥🅥🅗🅢"
+    }
+  },
+  "22": {
+    "inputs": {
+      "output_file_path": "C:\\Users\\Andrin\\Documents\\Maturaarbeit_W11WS16\\parktisches_Experiment\\Datensatz\\Daten\\Pipeline-Datensatz-erstellen\\prompts",
+      "file_name": "IMG_5462",
+      "file_extension": "txt",
+      "overwrite": true,
       "text": [
         "14",
         0
       ]
     },
-    "class_type": "SaveText|pysssss",
+    "class_type": "easy saveText",
     "_meta": {
-      "title": "Save Text 🐍"
+      "title": "Save Text"
     }
   }
 }

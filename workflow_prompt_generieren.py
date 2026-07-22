@@ -1,43 +1,60 @@
-import json
 from comfy import (
     test_connection,
     load_workflow,
-    set_image,
     submit_workflow,
     wait_until_finished,
-    read_prompt
+    set_image_path,
+    set_text_filename,
+    set_text_output_path,
 )
 
+from config import (
+    WORKFLOW_QWEN,
+    PREPROCESSED_DIR,
+    PROMPTS_DIR,
+)
 
-from config import WORKFLOW_QWEN
+from pathlib import Path
 
+def get_images():
+
+    return sorted(Path(PREPROCESSED_DIR).glob("*.png"))
 
 if __name__ == "__main__":
 
-    print("=== AI Pipeline ===")
+    print("=== Workflow Prompt generieren ===")
 
     test_connection()
 
-    workflow = load_workflow(WORKFLOW_QWEN)
+    for image in get_images():
+        print(f"\nVerarbeite: {image.name}")
 
-    workflow = set_image(
-    workflow,
-    "13",
-    "IMG_1455.jpg"
-)
+        workflow = load_workflow(
+            WORKFLOW_QWEN
+        )
 
-    prompt_id = submit_workflow(workflow)
+        workflow = set_image_path(
+            workflow,
+            "17",
+            str(image.resolve())
+        )
 
-    print()
+        workflow = set_text_output_path(
+            workflow,
+            "22",
+            PROMPTS_DIR
+        )
 
-    print("Workflow gestartet")
+        workflow = set_text_filename(
+            workflow,
+            "22",
+            image.stem
+        )
 
-    print(prompt_id)
+        prompt_id = submit_workflow(workflow)
 
-history = wait_until_finished(prompt_id)
+        wait_until_finished(
+            prompt_id
+        )
 
-prompt = read_prompt()
-
-print()
-print("===== Prompt =====")
-print(json.dumps(history, indent=2))
+        print("✓ Fertig")

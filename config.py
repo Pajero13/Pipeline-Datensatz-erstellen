@@ -12,7 +12,7 @@ TEMP_DIR = "temp"
 
 INPUT_DIR = "input"
 
-PROMPT_DIR = "prompts"
+PROMPTS_DIR = r"C:\Users\Andrin\Documents\Maturaarbeit_W11WS16\parktisches_Experiment\Datensatz\Daten\Pipeline-Datensatz-erstellen\prompts"
 
 PREPROCESSED_DIR = (
     r"C:\Users\Andrin\Documents\Maturaarbeit_W11WS16"
