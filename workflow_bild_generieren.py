@@ -5,11 +5,20 @@ from comfy import (
     set_filename,
     submit_workflow,
     wait_until_finished,
-    read_prompt
+    set_output_path,
 )
 
-from config import WORKFLOW_FLUX
+from config import (
+    WORKFLOW_FLUX,
+    PROMPTS_DIR,
+    OUTPUT_DIR,
+)
 
+from pathlib import Path
+
+def get_prompts():
+
+    return sorted(Path(PROMPTS_DIR).glob("*.txt"))
 
 if __name__ == "__main__":
 
@@ -17,30 +26,42 @@ if __name__ == "__main__":
 
     test_connection()
 
-    workflow = load_workflow(
-        WORKFLOW_FLUX
-    )
+    for prompt in get_prompts():
 
-prompt = read_prompt()
+        print(f"\nVerarbeite: {prompt.name}")
 
-workflow = set_filename(
-    workflow,
-    "9",
-    "IMG_1455"
-)
+        workflow = load_workflow(
+            WORKFLOW_FLUX
+        )
 
-prompt_id = submit_workflow(
-    workflow
-)
+        prompt_text = prompt.read_text(
+            encoding="utf-8"
+        )
 
-print()
+        workflow = set_prompt(
+            workflow,
+            "6",
+            prompt_text
+        )
 
-print("Workflow gestartet")
+        workflow = set_output_path(
+            workflow,
+            "26",
+            OUTPUT_DIR
+        )
 
-print(prompt_id)
+        workflow = set_filename(
+            workflow,
+            "26",
+            prompt.stem
+        )
 
-wait_until_finished(prompt_id)
+        prompt_id = submit_workflow(
+            workflow
+        )
 
-print()
+        wait_until_finished(
+            prompt_id
+        )
 
-print("Bild erfolgreich generiert.")
+        print("✓ Fertig")

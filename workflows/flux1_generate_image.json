@@ -39,19 +39,6 @@
       "title": "VAE Decode"
     }
   },
-  "9": {
-    "inputs": {
-      "filename_prefix": "ComfyUI",
-      "images": [
-        "8",
-        0
-      ]
-    },
-    "class_type": "SaveImage",
-    "_meta": {
-      "title": "Save Image"
-    }
-  },
   "10": {
     "inputs": {
       "vae_name": "ae.safetensors"
@@ -153,11 +140,38 @@
   },
   "25": {
     "inputs": {
-      "noise_seed": 18541494166141
+      "noise_seed": 664338941239874
     },
     "class_type": "RandomNoise",
     "_meta": {
       "title": "RandomNoise"
+    }
+  },
+  "26": {
+    "inputs": {
+      "output_path": "C:\\Users\\Andrin\\Documents\\Maturaarbeit_W11WS16\\parktisches_Experiment\\Datensatz\\Daten\\Pipeline-Datensatz-erstellen\\output",
+      "filename_prefix": "ComfyUI",
+      "filename_delimiter": "_",
+      "filename_number_padding": 4,
+      "filename_number_start": "false",
+      "extension": "png",
+      "dpi": 300,
+      "quality": 100,
+      "optimize_image": "true",
+      "lossless_webp": "false",
+      "overwrite_mode": "prefix_as_filename",
+      "show_history": "false",
+      "show_history_by_prefix": "true",
+      "embed_workflow": "true",
+      "show_previews": "true",
+      "images": [
+        "8",
+        0
+      ]
+    },
+    "class_type": "Image Save",
+    "_meta": {
+      "title": "Image Save"
     }
   }
 }

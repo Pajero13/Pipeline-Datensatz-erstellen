@@ -14,13 +14,10 @@ INPUT_DIR = "input"
 
 PROMPTS_DIR = r"C:\Users\Andrin\Documents\Maturaarbeit_W11WS16\parktisches_Experiment\Datensatz\Daten\Pipeline-Datensatz-erstellen\prompts"
 
-PREPROCESSED_DIR = (
-    r"C:\Users\Andrin\Documents\Maturaarbeit_W11WS16"
-    r"\parktisches_Experiment\Datensatz\Daten"
-    r"\Pipeline-Datensatz-erstellen\preprocessed"
-)
+PREPROCESSED_DIR = r"C:\Users\Andrin\Documents\Maturaarbeit_W11WS16\parktisches_Experiment\Datensatz\Daten\Pipeline-Datensatz-erstellen\preprocessed"
 
-OUTPUT_DIR = "output"
+
+OUTPUT_DIR = r"C:\Users\Andrin\Documents\Maturaarbeit_W11WS16\parktisches_Experiment\Datensatz\Daten\Pipeline-Datensatz-erstellen\output"
 
 LOG_DIR = "logs"
 

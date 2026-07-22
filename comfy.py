@@ -89,14 +89,13 @@ def get_prompt_text(history):
 
         return None
     
-def read_prompt():
+def set_prompt(
+    workflow: dict,
+    node_id: str,
+    prompt: str
+) -> dict:
 
-    with open(PROMPT_FILE, "r", encoding="cp1252") as f:
-        return f.read()
-    
-def set_prompt(workflow: dict, prompt: str) -> dict:
-
-    workflow["6"]["inputs"]["text"] = prompt
+    workflow[node_id]["inputs"]["text"] = prompt
 
     return workflow
 
