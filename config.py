@@ -16,6 +16,7 @@ PROMPTS_DIR = r"C:\Users\Andrin\Documents\Maturaarbeit_W11WS16\parktisches_Exper
 
 PREPROCESSED_DIR = r"C:\Users\Andrin\Documents\Maturaarbeit_W11WS16\parktisches_Experiment\Datensatz\Daten\Pipeline-Datensatz-erstellen\preprocessed"
 
+QWEN_CUSTOM_PROMPT = r"C:\Users\Andrin\Documents\Maturaarbeit_W11WS16\parktisches_Experiment\Datensatz\Daten\Pipeline-Datensatz-erstellen\config\qwen_custom_prompt.txt"
 
 OUTPUT_DIR = r"C:\Users\Andrin\Documents\Maturaarbeit_W11WS16\parktisches_Experiment\Datensatz\Daten\Pipeline-Datensatz-erstellen\output"
 

@@ -6,12 +6,14 @@ from comfy import (
     set_image_path,
     set_text_filename,
     set_text_output_path,
+    set_custom_prompt,
 )
 
 from config import (
     WORKFLOW_QWEN,
     PREPROCESSED_DIR,
     PROMPTS_DIR,
+    QWEN_CUSTOM_PROMPT,
 )
 
 from pathlib import Path
@@ -26,6 +28,12 @@ if __name__ == "__main__":
 
     test_connection()
 
+    custom_prompt = Path(
+        QWEN_CUSTOM_PROMPT
+    ).read_text(
+        encoding="utf-8"
+    )
+
     for image in get_images():
         print(f"\nVerarbeite: {image.name}")
 
@@ -33,6 +41,11 @@ if __name__ == "__main__":
             WORKFLOW_QWEN
         )
 
+        workflow = set_custom_prompt(
+        workflow,
+        "14",
+        custom_prompt
+        )
         workflow = set_image_path(
             workflow,
             "17",

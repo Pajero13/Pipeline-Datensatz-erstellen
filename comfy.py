@@ -163,3 +163,13 @@ def set_text_filename(
     workflow[node_id]["inputs"]["file_name"] = filename
 
     return workflow
+
+def set_custom_prompt(
+    workflow: dict,
+    node_id: str,
+    custom_prompt: str
+) -> dict:
+
+    workflow[node_id]["inputs"]["custom_prompt"] = custom_prompt
+
+    return workflow
