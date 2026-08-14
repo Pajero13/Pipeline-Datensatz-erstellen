@@ -2,6 +2,7 @@
 import requests
 import json
 import time
+import hashlib
 from config import COMFY_URL
 from config import COMFY_URL, PROMPT_FILE
 
@@ -173,3 +174,18 @@ def set_custom_prompt(
     workflow[node_id]["inputs"]["custom_prompt"] = custom_prompt
 
     return workflow
+
+def set_noise_seed(
+    workflow: dict,
+    node_id: str,
+    seed: int
+) -> dict:
+    
+    workflow[node_id]["inputs"]["noise_seed"] = seed
+
+    return workflow
+
+def generate_seed_from_filename(filename: str) -> int:
+    hash_object = hashlib.md5(filename.encode())
+    seed = int(hash_object.hexdigest(), 16) % (2**31 - 1)
+    return seed

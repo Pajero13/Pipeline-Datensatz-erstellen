@@ -6,6 +6,8 @@ from comfy import (
     submit_workflow,
     wait_until_finished,
     set_output_path,
+    set_noise_seed,
+    generate_seed_from_filename,
 )
 
 from config import (
@@ -48,6 +50,14 @@ if __name__ == "__main__":
             workflow,
             "26",
             OUTPUT_DIR
+        )
+        
+        seed = generate_seed_from_filename(prompt.name)
+        
+        workflow = set_noise_seed(
+            workflow, 
+            "25", 
+            seed
         )
 
         workflow = set_filename(
