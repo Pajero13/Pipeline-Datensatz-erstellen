@@ -110,7 +110,7 @@
   "17": {
     "inputs": {
       "scheduler": "normal",
-      "steps": 10,
+      "steps": 15,
       "denoise": 1,
       "model": [
         "12",
