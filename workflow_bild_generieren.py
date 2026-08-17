@@ -8,6 +8,8 @@ from comfy import (
     set_output_path,
     set_noise_seed,
     generate_seed_from_filename,
+    print_time,
+    time,
 )
 
 from config import (
@@ -23,6 +25,8 @@ def get_prompts():
     return sorted(Path(PROMPTS_DIR).glob("*.txt"))
 
 if __name__ == "__main__":
+
+    start_zeit = time.perf_counter()
 
     print("=== Workflow Bild generieren ===")
 
@@ -76,7 +80,10 @@ if __name__ == "__main__":
         wait_until_finished(
             prompt_id
         )
-
+        if i == 1:
+            intialisierung_zeit = time.perf_counter()
         i += 1
 
-    print("✓ Fertig")
+end_zeit = time.perf_counter()
+print_time(start_zeit,end_zeit,False)
+print_time(start_zeit,intialisierung_zeit,True)

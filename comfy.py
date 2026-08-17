@@ -3,6 +3,7 @@ import requests
 import json
 import time
 import hashlib
+import time
 from config import COMFY_URL
 from config import COMFY_URL, PROMPT_FILE
 
@@ -189,3 +190,14 @@ def generate_seed_from_filename(filename: str) -> int:
     hash_object = hashlib.md5(filename.encode())
     seed = int(hash_object.hexdigest(), 16) % (2**31 - 1)
     return seed
+
+def print_time(start_zeit,end_zeit,initialisierung):
+    dauer_sekunden = end_zeit - start_zeit
+    stunden = int(dauer_sekunden // 3600)
+    minuten = int((dauer_sekunden % 3600) // 60)
+    sekunden = dauer_sekunden % 60
+    print()
+    if initialisierung:
+        print(f"Davon  {stunden} Stunden, {minuten} Minuten, {sekunden:.0f} Sekunden für die Initilasierung und das erste Bild.")
+    else:
+        print(f"Dauer: {stunden} Stunden, {minuten} Minuten, {sekunden:.0f} Sekunden")

@@ -7,6 +7,8 @@ from comfy import (
     set_text_filename,
     set_text_output_path,
     set_custom_prompt,
+    print_time,
+    time,
 )
 
 from config import (
@@ -23,6 +25,8 @@ def get_images():
     return sorted(Path(PREPROCESSED_DIR).glob("*.png"))
 
 if __name__ == "__main__":
+
+    start_zeit = time.perf_counter()
 
     print("=== Workflow Prompt generieren ===")
 
@@ -76,4 +80,5 @@ if __name__ == "__main__":
 
         i += 1
 
-    print("✓ Fertig")
+end_zeit = time.perf_counter()
+print_time(start_zeit,end_zeit,False)
