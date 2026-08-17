@@ -28,9 +28,12 @@ if __name__ == "__main__":
 
     test_connection()
 
+    i = 0
+    n = len(get_prompts())
+
     for prompt in get_prompts():
 
-        print(f"\nVerarbeite: {prompt.name}")
+        print(f"\nVerarbeite: {prompt.name} ({i + 1} von {n}) ")
 
         workflow = load_workflow(
             WORKFLOW_FLUX
@@ -74,4 +77,6 @@ if __name__ == "__main__":
             prompt_id
         )
 
-        print("✓ Fertig")
+        i += 1
+
+    print("✓ Fertig")

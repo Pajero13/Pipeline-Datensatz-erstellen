@@ -30,9 +30,12 @@ if __name__ == "__main__":
 
     test_connection()
 
+    i = 0
+    n = len(get_images())
+
     for image in get_images():
 
-        print(f"\nVerarbeite: {image.name}")
+        print(f"\nVerarbeite: {image.name} ({i + 1} von {n}) ")
 
         normalized = normalize_image(image)
 
@@ -62,4 +65,6 @@ if __name__ == "__main__":
 
         wait_until_finished(prompt_id)
 
-        print("✓ Fertig")
+        i += 1
+
+    print("✓ Fertig")

@@ -34,8 +34,12 @@ if __name__ == "__main__":
         encoding="utf-8"
     )
 
+    i = 0
+    n = len(get_images())
+
     for image in get_images():
-        print(f"\nVerarbeite: {image.name}")
+
+        print(f"\nVerarbeite: {image.name} ({i + 1} von {n}) ")
 
         workflow = load_workflow(
             WORKFLOW_QWEN
@@ -70,4 +74,6 @@ if __name__ == "__main__":
             prompt_id
         )
 
-        print("✓ Fertig")
+        i += 1
+
+    print("✓ Fertig")
