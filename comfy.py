@@ -191,6 +191,66 @@ def generate_seed_from_filename(filename: str) -> int:
     seed = int(hash_object.hexdigest(), 16) % (2**31 - 1)
     return seed
 
+def _dateien_in_ordner(ordner, muster: list[str]) -> list:
+    from pathlib import Path
+
+    ordner = Path(ordner)
+    dateien = []
+    for m in muster:
+        dateien.extend(ordner.glob(m))
+    return sorted(dateien)
+
+
+def get_batches(basis_ordner, muster: list[str]) -> list:
+    """
+    Ermittelt die zu verarbeitenden 'Batches' in einem Basisordner.
+
+    - Liegen im Basisordner direkt passende Dateien, wird der
+      Basisordner selbst als ein Batch zurückgegeben (Batch-Name "").
+      Dadurch funktioniert es weiterhin ohne Unterordner.
+    - Für jeden Unterordner des Basisordners, der passende Dateien
+      enthält, wird ein eigener Batch mit dem Namen des Unterordners
+      zurückgegeben. So können mehrere Ordner gleichzeitig in den
+      Eingabeordner kopiert und einzeln verarbeitet werden.
+
+    Rückgabe: Liste von (batch_name, ordner_pfad)-Tupeln.
+    """
+    from pathlib import Path
+
+    basis_ordner = Path(basis_ordner)
+    batches = []
+
+    if not basis_ordner.exists():
+        return batches
+
+    if _dateien_in_ordner(basis_ordner, muster):
+        batches.append(("", basis_ordner))
+
+    for eintrag in sorted(basis_ordner.iterdir()):
+        if eintrag.is_dir() and _dateien_in_ordner(eintrag, muster):
+            batches.append((eintrag.name, eintrag))
+
+    return batches
+
+
+def get_batch_dateien(ordner, muster: list[str]) -> list:
+    """Gibt die zu einem Batch-Ordner passenden Dateien sortiert zurück."""
+    return _dateien_in_ordner(ordner, muster)
+
+
+def ausgabe_ordner_fuer_batch(basis_ordner, batch_name: str):
+    """
+    Liefert (und erstellt bei Bedarf) den Ausgabeordner für einen Batch:
+    Batch-Name "" -> Basisordner selbst; sonst Basisordner/Batch-Name.
+    """
+    from pathlib import Path
+
+    basis_ordner = Path(basis_ordner)
+    ziel = basis_ordner / batch_name if batch_name else basis_ordner
+    ziel.mkdir(parents=True, exist_ok=True)
+    return ziel
+
+
 def print_time(start_zeit,end_zeit,initialisierung):
     dauer_sekunden = end_zeit - start_zeit
     stunden = int(dauer_sekunden // 3600)
