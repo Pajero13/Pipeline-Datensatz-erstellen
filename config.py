@@ -24,9 +24,12 @@ QWEN_CUSTOM_PROMPT = r"C:\Users\Andrin\Documents\Maturaarbeit_W11WS16\parktische
 
 OUTPUT_DIR = r"C:\Users\Andrin\Documents\Maturaarbeit_W11WS16\parktisches_Experiment\Datensatz\Daten\Pipeline-Datensatz-erstellen\output"
 
-# Eigene Unterordner innerhalb von OUTPUT_DIR, damit sich flux1-schnell
-# und flux2-klein nicht gegenseitig überschreiben (gleiche Prompt-Dateinamen).
-OUTPUT_DIR_FLUX2_SCHNELL = OUTPUT_DIR + r"\flux1_schnell"
+# Eigene Unterordner innerhalb von OUTPUT_DIR, damit sich flux1,
+# flux2-schnell und flux2-klein nicht gegenseitig überschreiben
+# (gleiche Prompt-Dateinamen).
+OUTPUT_DIR_FLUX1 = OUTPUT_DIR + r"\flux1"
+
+OUTPUT_DIR_FLUX2_SCHNELL = OUTPUT_DIR + r"\flux2_schnell"
 
 OUTPUT_DIR_FLUX2_KLEIN = OUTPUT_DIR + r"\flux2_klein"
 

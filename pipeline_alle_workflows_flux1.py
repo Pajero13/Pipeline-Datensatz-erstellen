@@ -211,7 +211,7 @@ if __name__ == "__main__":
         "batches": batch_info,
     })
 
-    workflow_ausfuehren("workflow_bild_generieren.py")
+    workflow_ausfuehren("workflow_bild_generieren_flux1.py")
 
     protokoll["ende"] = datetime.now().isoformat(timespec="seconds")
 

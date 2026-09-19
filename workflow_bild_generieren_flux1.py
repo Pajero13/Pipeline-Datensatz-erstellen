@@ -18,7 +18,7 @@ from comfy import (
 from config import (
     WORKFLOW_FLUX,
     PROMPTS_DIR,
-    OUTPUT_DIR,
+    OUTPUT_DIR_FLUX1,
 )
 
 from pathlib import Path
@@ -49,7 +49,7 @@ if __name__ == "__main__":
         if batch_name:
             print(f"\n--- Ordner: {batch_name} ---")
 
-        ausgabe_ordner = ausgabe_ordner_fuer_batch(OUTPUT_DIR, batch_name)
+        ausgabe_ordner = ausgabe_ordner_fuer_batch(OUTPUT_DIR_FLUX1, batch_name)
 
         for prompt in get_batch_dateien(batch_ordner, TEXT_MUSTER):
 
