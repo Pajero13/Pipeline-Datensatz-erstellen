@@ -31,6 +31,9 @@ from config import (
 
 TEXT_MUSTER = ["*.txt"]
 
+# Node-ID des Save-Nodes im flux2-schnell-Workflow.
+SAVE_NODE_ID = "26"
+
 
 def get_batches_input():
     return get_batches(PROMPTS_DIR, TEXT_MUSTER)
@@ -78,7 +81,7 @@ if __name__ == "__main__":
 
             workflow = set_output_path(
                 workflow,
-                "26",
+                SAVE_NODE_ID,
                 str(ausgabe_ordner)
             )
 
@@ -92,7 +95,7 @@ if __name__ == "__main__":
 
             workflow = set_filename(
                 workflow,
-                "26",
+                SAVE_NODE_ID,
                 prompt.stem
             )
 

@@ -1,14 +1,13 @@
 # workflow_bild_generieren_flux2_klein.py
 #
-# Wie workflow_bild_generieren.py, aber mit dem flux2-klein-Modell.
-# Der Save-Node (Node "9") wurde auf den "Image Save"-Custom-Node
-# umgestellt (wie bei den anderen Workflows) - set_output_path()
-# funktioniert hier also genau gleich wie bei flux1-dev/-schnell.
+# Wie workflow_bild_generieren_flux1.py, aber mit dem flux2-klein-
+# Modell. Node "9" (Save-Node) im ComfyUI-Workflow ist der "Image
+# Save"-Custom-Node (mit output_path-Feld) - genau wie bei den
+# anderen Modellen.
 #
 # Liest Prompts aus dem gemeinsamen PROMPTS_DIR (Batches/Unterordner
 # werden unterstützt) und speichert die Bilder unter
-# OUTPUT_DIR_FLUX2_KLEIN (eigener Unterordner, damit sich die
-# Ergebnisse verschiedener Modelle nicht überschreiben).
+# OUTPUT_DIR_FLUX2_KLEIN.
 
 from comfy import (
     test_connection,
@@ -34,6 +33,9 @@ from config import (
 )
 
 TEXT_MUSTER = ["*.txt"]
+
+# Node-ID des Save-Nodes im flux2-klein-Workflow.
+SAVE_NODE_ID = "9"
 
 
 def get_batches_input():
@@ -82,7 +84,7 @@ if __name__ == "__main__":
 
             workflow = set_output_path(
                 workflow,
-                "9",
+                SAVE_NODE_ID,
                 str(ausgabe_ordner)
             )
 
@@ -96,7 +98,7 @@ if __name__ == "__main__":
 
             workflow = set_filename(
                 workflow,
-                "9",
+                SAVE_NODE_ID,
                 prompt.stem
             )
 
@@ -107,7 +109,6 @@ if __name__ == "__main__":
             wait_until_finished(
                 prompt_id
             )
-
             if i == 1:
                 intialisierung_zeit = time.perf_counter()
             i += 1
