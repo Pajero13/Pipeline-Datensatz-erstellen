@@ -62,7 +62,7 @@
   },
   "12": {
     "inputs": {
-      "unet_name": "t5xxl_fp8_e4m3fn_scaled.safetensors",
+      "unet_name": "flux1-schnell.safetensors",
       "weight_dtype": "default"
     },
     "class_type": "UNETLoader",
@@ -140,7 +140,7 @@
   },
   "25": {
     "inputs": {
-      "noise_seed": 664338941239874
+      "noise_seed": 540412671314466
     },
     "class_type": "RandomNoise",
     "_meta": {
@@ -149,7 +149,7 @@
   },
   "26": {
     "inputs": {
-      "output_path": "C:\\Users\\Andrin\\Documents\\Maturaarbeit_W11WS16\\parktisches_Experiment\\Datensatz\\Daten\\Pipeline-Datensatz-erstellen\\output_schnell",
+      "output_path": "C:\\Users\\Andrin\\Documents\\Maturaarbeit_W11WS16\\parktisches_Experiment\\Datensatz\\Daten\\Pipeline-Datensatz-erstellen\\output",
       "filename_prefix": "ComfyUI_schnell",
       "filename_delimiter": "_",
       "filename_number_padding": 4,

@@ -1,14 +1,14 @@
-# pipeline_alle_workflows_flux2_schnell.py
+# pipeline_alle_workflows_flux1_schnell.py
 #
 # Wie pipeline_alle_workflows.py, aber der dritte Schritt (Bild
-# generieren) nutzt das flux2-schnell-Modell und speichert die
-# Ergebnisse unter OUTPUT_DIR_FLUX2_SCHNELL.
+# generieren) nutzt das flux1-schnell-Modell und speichert die
+# Ergebnisse unter OUTPUT_DIR_FLUX1_SCHNELL.
 #
 # Name der Protokoll-Datei:
 #   - ohne Angabe: Zeitstempel
 #   - mit "--name <bezeichnung>": <bezeichnung>.json
 #
-# Beispiel: python pipeline_alle_workflows_flux2_schnell.py --name testlauf_schnell_1
+# Beispiel: python pipeline_alle_workflows_flux1_schnell.py --name testlauf_schnell_1
 
 import argparse
 import json
@@ -21,7 +21,7 @@ from comfy import load_workflow, get_batches, get_batch_dateien
 from config import (
     WORKFLOW_BILD_SKALIEREN,
     WORKFLOW_QWEN,
-    WORKFLOW_FLUX2_SCHNELL,
+    WORKFLOW_FLUX1_SCHNELL,
     INPUT_DIR,
     PREPROCESSED_DIR,
     PROMPTS_DIR,
@@ -40,7 +40,7 @@ NODES_QWEN = {
     "modellname": ("14", "model_name"),
 }
 
-NODES_FLUX2_SCHNELL = {
+NODES_FLUX1_SCHNELL = {
     "modellname": ("12", "unet_name"),
     "sample_steps": ("17", "steps"),
     "breite": ("5", "width"),
@@ -56,7 +56,7 @@ TXT_MUSTER = ["*.txt"]
 
 def parse_args():
     parser = argparse.ArgumentParser(
-        description="Führt die komplette Bild-Pipeline mit flux2-schnell aus."
+        description="Führt die komplette Bild-Pipeline mit flux1-schnell aus."
     )
     parser.add_argument(
         "--name",
@@ -122,7 +122,7 @@ def workflow_ausfuehren(script_name: str):
 def dateiname_bestimmen(name) -> str:
     if not name:
         zeitstempel = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-        return f"einstellungen_flux2_schnell_{zeitstempel}.json"
+        return f"einstellungen_flux1_schnell_{zeitstempel}.json"
     return name if name.lower().endswith(".json") else f"{name}.json"
 
 
@@ -138,7 +138,7 @@ if __name__ == "__main__":
     args = parse_args()
 
     protokoll = {
-        "modell": "flux2-schnell",
+        "modell": "flux1-schnell",
         "start": datetime.now().isoformat(timespec="seconds"),
         "ende": None,
         "workflows": [],
@@ -174,24 +174,24 @@ if __name__ == "__main__":
 
     workflow_ausfuehren("workflow_prompt_generieren.py")
 
-    # --- 3. Bild generieren (flux2-schnell) ---
-    workflow = load_workflow(WORKFLOW_FLUX2_SCHNELL)
-    einstellungen = einstellungen_auslesen(workflow, NODES_FLUX2_SCHNELL)
+    # --- 3. Bild generieren (flux1-schnell) ---
+    workflow = load_workflow(WORKFLOW_FLUX1_SCHNELL)
+    einstellungen = einstellungen_auslesen(workflow, NODES_FLUX1_SCHNELL)
     batch_info = batches_erfassen(PROMPTS_DIR, TXT_MUSTER)
-    print(block_formatieren("Workflow: Bild generieren (flux2-schnell)", einstellungen))
+    print(block_formatieren("Workflow: Bild generieren (flux1-schnell)", einstellungen))
     print("--- Batches (prompts) ---")
     print(batches_als_text(batch_info))
     protokoll["workflows"].append({
-        "workflow": "Bild generieren (flux2-schnell)",
+        "workflow": "Bild generieren (flux1-schnell)",
         "einstellungen": einstellungen,
         "batches": batch_info,
     })
 
-    workflow_ausfuehren("workflow_bild_generieren_flux2_schnell.py")
+    workflow_ausfuehren("workflow_bild_generieren_flux1_schnell.py")
 
     protokoll["ende"] = datetime.now().isoformat(timespec="seconds")
 
     pfad = protokoll_speichern(protokoll, args.name)
     print(f"\nProtokoll gespeichert unter: {pfad}")
 
-    print("\n=== Gesamte Pipeline (flux2-schnell) abgeschlossen ===")
+    print("\n=== Gesamte Pipeline (flux1-schnell) abgeschlossen ===")

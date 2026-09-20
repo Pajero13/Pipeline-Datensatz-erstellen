@@ -1,9 +1,9 @@
-# workflow_bild_generieren_flux2_schnell.py
+# workflow_bild_generieren_flux1_schnell.py
 #
-# Wie workflow_bild_generieren.py, aber mit dem flux2-schnell-Modell.
+# Wie workflow_bild_generieren.py, aber mit dem flux1-schnell-Modell.
 # Liest Prompts aus dem gemeinsamen PROMPTS_DIR (Batches/Unterordner
 # werden unterstützt) und speichert die Bilder unter
-# OUTPUT_DIR_FLUX2_SCHNELL (eigener Unterordner, damit sich die
+# OUTPUT_DIR_FLUX1_SCHNELL (eigener Unterordner, damit sich die
 # Ergebnisse verschiedener Modelle nicht überschreiben).
 
 from comfy import (
@@ -24,14 +24,14 @@ from comfy import (
 )
 
 from config import (
-    WORKFLOW_FLUX2_SCHNELL,
+    WORKFLOW_FLUX1_SCHNELL,
     PROMPTS_DIR,
-    OUTPUT_DIR_FLUX2_SCHNELL,
+    OUTPUT_DIR_FLUX1_SCHNELL,
 )
 
 TEXT_MUSTER = ["*.txt"]
 
-# Node-ID des Save-Nodes im flux2-schnell-Workflow.
+# Node-ID des Save-Nodes im flux1-schnell-Workflow.
 SAVE_NODE_ID = "26"
 
 
@@ -43,7 +43,7 @@ if __name__ == "__main__":
 
     start_zeit = time.perf_counter()
 
-    print("=== Workflow Bild generieren (flux2-schnell) ===")
+    print("=== Workflow Bild generieren (flux1-schnell) ===")
 
     test_connection()
 
@@ -58,7 +58,7 @@ if __name__ == "__main__":
         if batch_name:
             print(f"\n--- Ordner: {batch_name} ---")
 
-        ausgabe_ordner = ausgabe_ordner_fuer_batch(OUTPUT_DIR_FLUX2_SCHNELL, batch_name)
+        ausgabe_ordner = ausgabe_ordner_fuer_batch(OUTPUT_DIR_FLUX1_SCHNELL, batch_name)
 
         for prompt in get_batch_dateien(batch_ordner, TEXT_MUSTER):
 
@@ -66,7 +66,7 @@ if __name__ == "__main__":
             print(f"\nVerarbeite: {bezeichnung} ({i + 1} von {n}) ")
 
             workflow = load_workflow(
-                WORKFLOW_FLUX2_SCHNELL
+                WORKFLOW_FLUX1_SCHNELL
             )
 
             prompt_text = prompt.read_text(
