@@ -81,13 +81,6 @@ def einstellungen_auslesen(workflow: dict, node_map: dict) -> dict:
     }
 
 
-def block_formatieren(titel: str, einstellungen: dict) -> str:
-    zeilen = [f"--- {titel} ---"]
-    for label, wert in einstellungen.items():
-        zeilen.append(f"{label}: {wert}")
-    return "\n".join(zeilen)
-
-
 def batches_erfassen(basis_ordner, muster: list) -> dict:
     batches = get_batches(basis_ordner, muster)
     eintraege = [
@@ -98,16 +91,6 @@ def batches_erfassen(basis_ordner, muster: list) -> dict:
         for batch_name, batch_ordner in batches
     ]
     return {"basis_ordner": str(basis_ordner), "batches": eintraege}
-
-
-def batches_als_text(batch_info: dict) -> str:
-    zeilen = [f"Ordner: {batch_info['basis_ordner']}"]
-    if not batch_info["batches"]:
-        zeilen.append("  Keine passenden Dateien gefunden.")
-    for eintrag in batch_info["batches"]:
-        bezeichnung = eintrag["ordner"] if eintrag["ordner"] else "(kein Unterordner)"
-        zeilen.append(f"  {bezeichnung}: {eintrag['anzahl_dateien']} Datei(en)")
-    return "\n".join(zeilen)
 
 
 def workflow_ausfuehren(script_name: str):
@@ -148,9 +131,6 @@ if __name__ == "__main__":
     workflow = load_workflow(WORKFLOW_BILD_SKALIEREN)
     einstellungen = einstellungen_auslesen(workflow, NODES_SKALIEREN)
     batch_info = batches_erfassen(INPUT_DIR, BILD_MUSTER)
-    print(block_formatieren("Workflow: Bild skalieren", einstellungen))
-    print("--- Batches (input) ---")
-    print(batches_als_text(batch_info))
     protokoll["workflows"].append({
         "workflow": "Bild skalieren",
         "einstellungen": einstellungen,
@@ -163,9 +143,6 @@ if __name__ == "__main__":
     workflow = load_workflow(WORKFLOW_QWEN)
     einstellungen = einstellungen_auslesen(workflow, NODES_QWEN)
     batch_info = batches_erfassen(PREPROCESSED_DIR, PNG_MUSTER)
-    print(block_formatieren("Workflow: Prompt generieren", einstellungen))
-    print("--- Batches (preprocessed) ---")
-    print(batches_als_text(batch_info))
     protokoll["workflows"].append({
         "workflow": "Prompt generieren",
         "einstellungen": einstellungen,
@@ -178,9 +155,6 @@ if __name__ == "__main__":
     workflow = load_workflow(WORKFLOW_FLUX1_SCHNELL)
     einstellungen = einstellungen_auslesen(workflow, NODES_FLUX1_SCHNELL)
     batch_info = batches_erfassen(PROMPTS_DIR, TXT_MUSTER)
-    print(block_formatieren("Workflow: Bild generieren (flux1-schnell)", einstellungen))
-    print("--- Batches (prompts) ---")
-    print(batches_als_text(batch_info))
     protokoll["workflows"].append({
         "workflow": "Bild generieren (flux1-schnell)",
         "einstellungen": einstellungen,
