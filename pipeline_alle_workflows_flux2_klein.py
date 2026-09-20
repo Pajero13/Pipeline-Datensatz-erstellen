@@ -1,23 +1,21 @@
 # pipeline_alle_workflows_flux2_klein.py
 #
-# Wie pipeline_alle_workflows.py, aber der dritte Schritt (Bild
-# generieren) nutzt das flux2-klein-Modell und speichert die
-# Ergebnisse unter OUTPUT_DIR_FLUX2_KLEIN.
-#
-# Name der Protokoll-Datei:
-#   - ohne Angabe: Zeitstempel
-#   - mit "--name <bezeichnung>": <bezeichnung>.json
+# Wie pipeline_alle_workflows_flux1.py, aber der dritte Schritt
+# nutzt das flux2-klein-Modell (workflow_bild_generieren_flux2_klein.py,
+# Ergebnisse unter OUTPUT_DIR_FLUX2_KLEIN).
 #
 # Beispiel: python pipeline_alle_workflows_flux2_klein.py --name testlauf_klein_1
 
 import argparse
-import json
-import subprocess
-import sys
 from datetime import datetime
-from pathlib import Path
 
-from comfy import load_workflow, get_batches, get_batch_dateien
+from comfy import (
+    load_workflow,
+    einstellungen_auslesen,
+    batches_erfassen,
+    workflow_ausfuehren,
+    protokoll_speichern,
+)
 from config import (
     WORKFLOW_BILD_SKALIEREN,
     WORKFLOW_QWEN,
@@ -25,10 +23,6 @@ from config import (
     INPUT_DIR,
     PREPROCESSED_DIR,
     PROMPTS_DIR,
-)
-
-AUSGABE_DIR = Path(
-    r"C:\Users\Andrin\Documents\Maturaarbeit_W11WS16\parktisches_Experiment\Datensatz\Ausgabedateien"
 )
 
 NODES_SKALIEREN = {
@@ -69,55 +63,6 @@ def parse_args():
     return parser.parse_args()
 
 
-def hole_einstellung(workflow: dict, node_id: str, feld: str):
-    try:
-        return workflow[node_id]["inputs"][feld]
-    except KeyError:
-        return f"nicht gefunden (Node {node_id} / Feld '{feld}')"
-
-
-def einstellungen_auslesen(workflow: dict, node_map: dict) -> dict:
-    return {
-        label: hole_einstellung(workflow, node_id, feld)
-        for label, (node_id, feld) in node_map.items()
-    }
-
-
-def batches_erfassen(basis_ordner, muster: list) -> dict:
-    batches = get_batches(basis_ordner, muster)
-    eintraege = [
-        {
-            "ordner": batch_name if batch_name else None,
-            "anzahl_dateien": len(get_batch_dateien(batch_ordner, muster)),
-        }
-        for batch_name, batch_ordner in batches
-    ]
-    return {"basis_ordner": str(basis_ordner), "batches": eintraege}
-
-
-def workflow_ausfuehren(script_name: str):
-    print(f"\n>>> Starte {script_name} ...\n")
-    ergebnis = subprocess.run([sys.executable, script_name])
-    if ergebnis.returncode != 0:
-        raise RuntimeError(
-            f"{script_name} wurde mit Fehlercode {ergebnis.returncode} beendet."
-        )
-
-
-def dateiname_bestimmen(name) -> str:
-    if not name:
-        zeitstempel = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-        return f"einstellungen_flux2_klein_{zeitstempel}.json"
-    return name if name.lower().endswith(".json") else f"{name}.json"
-
-
-def protokoll_speichern(protokoll: dict, name) -> Path:
-    AUSGABE_DIR.mkdir(parents=True, exist_ok=True)
-    pfad = AUSGABE_DIR / dateiname_bestimmen(name)
-    pfad.write_text(json.dumps(protokoll, indent=2, ensure_ascii=False), encoding="utf-8")
-    return pfad
-
-
 if __name__ == "__main__":
 
     args = parse_args()
@@ -131,43 +76,37 @@ if __name__ == "__main__":
 
     # --- 1. Bild skalieren ---
     workflow = load_workflow(WORKFLOW_BILD_SKALIEREN)
-    einstellungen = einstellungen_auslesen(workflow, NODES_SKALIEREN)
-    batch_info = batches_erfassen(INPUT_DIR, BILD_MUSTER)
     protokoll["workflows"].append({
         "workflow": "Bild skalieren",
-        "einstellungen": einstellungen,
-        "batches": batch_info,
+        "einstellungen": einstellungen_auslesen(workflow, NODES_SKALIEREN),
+        "batches": batches_erfassen(INPUT_DIR, BILD_MUSTER),
     })
 
     workflow_ausfuehren("workflow_bild_skalieren.py")
 
     # --- 2. Prompt generieren ---
     workflow = load_workflow(WORKFLOW_QWEN)
-    einstellungen = einstellungen_auslesen(workflow, NODES_QWEN)
-    batch_info = batches_erfassen(PREPROCESSED_DIR, PNG_MUSTER)
     protokoll["workflows"].append({
         "workflow": "Prompt generieren",
-        "einstellungen": einstellungen,
-        "batches": batch_info,
+        "einstellungen": einstellungen_auslesen(workflow, NODES_QWEN),
+        "batches": batches_erfassen(PREPROCESSED_DIR, PNG_MUSTER),
     })
 
     workflow_ausfuehren("workflow_prompt_generieren.py")
 
     # --- 3. Bild generieren (flux2-klein) ---
     workflow = load_workflow(WORKFLOW_FLUX2_KLEIN)
-    einstellungen = einstellungen_auslesen(workflow, NODES_FLUX2_KLEIN)
-    batch_info = batches_erfassen(PROMPTS_DIR, TXT_MUSTER)
     protokoll["workflows"].append({
         "workflow": "Bild generieren (flux2-klein)",
-        "einstellungen": einstellungen,
-        "batches": batch_info,
+        "einstellungen": einstellungen_auslesen(workflow, NODES_FLUX2_KLEIN),
+        "batches": batches_erfassen(PROMPTS_DIR, TXT_MUSTER),
     })
 
     workflow_ausfuehren("workflow_bild_generieren_flux2_klein.py")
 
     protokoll["ende"] = datetime.now().isoformat(timespec="seconds")
 
-    pfad = protokoll_speichern(protokoll, args.name)
+    pfad = protokoll_speichern(protokoll, args.name, modell_praefix="einstellungen_flux2_klein")
     print(f"\nProtokoll gespeichert unter: {pfad}")
 
     print("\n=== Gesamte Pipeline (flux2-klein) abgeschlossen ===")

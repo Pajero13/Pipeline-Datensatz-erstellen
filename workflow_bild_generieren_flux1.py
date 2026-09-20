@@ -1,17 +1,18 @@
+# workflow_bild_generieren_flux1.py
+#
+# Erzeugt Bilder mit dem flux1-Modell (dev) für alle Prompts in
+# PROMPTS_DIR (Batches/Unterordner werden unterstützt) und speichert
+# sie unter OUTPUT_DIR_FLUX1. Der Pro-Bild-Ablauf (Prompt/Seed/Output
+# setzen, ComfyUI aufrufen, warten) steckt in
+# comfy.bild_fuer_prompt_generieren().
+
 from comfy import (
     test_connection,
-    load_workflow,
-    set_prompt,
-    set_filename,
-    submit_workflow,
-    wait_until_finished,
-    set_output_path,
-    set_noise_seed,
-    generate_seed_from_filename,
-    print_time,
     get_batches,
     get_batch_dateien,
     ausgabe_ordner_fuer_batch,
+    bild_fuer_prompt_generieren,
+    print_time,
     time,
 )
 
@@ -21,24 +22,21 @@ from config import (
     OUTPUT_DIR_FLUX1,
 )
 
-from pathlib import Path
-
 TEXT_MUSTER = ["*.txt"]
 
-
-def get_batches_input():
-    return get_batches(PROMPTS_DIR, TEXT_MUSTER)
+# Node-ID des Save-Nodes im flux1-Workflow.
+SAVE_NODE_ID = "26"
 
 
 if __name__ == "__main__":
 
     start_zeit = time.perf_counter()
 
-    print("=== Workflow Bild generieren ===")
+    print("=== Workflow Bild generieren (flux1) ===")
 
     test_connection()
 
-    batches = get_batches_input()
+    batches = get_batches(PROMPTS_DIR, TEXT_MUSTER)
 
     i = 0
     n = sum(len(get_batch_dateien(ordner, TEXT_MUSTER)) for _, ordner in batches)
@@ -56,47 +54,13 @@ if __name__ == "__main__":
             bezeichnung = f"{batch_name}/{prompt.name}" if batch_name else prompt.name
             print(f"\nVerarbeite: {bezeichnung} ({i + 1} von {n}) ")
 
-            workflow = load_workflow(
-                WORKFLOW_FLUX
+            bild_fuer_prompt_generieren(
+                workflow_pfad=WORKFLOW_FLUX,
+                save_node_id=SAVE_NODE_ID,
+                prompt_pfad=prompt,
+                ausgabe_ordner=ausgabe_ordner,
             )
 
-            prompt_text = prompt.read_text(
-                encoding="utf-8"
-            )
-
-            workflow = set_prompt(
-                workflow,
-                "6",
-                prompt_text
-            )
-
-            workflow = set_output_path(
-                workflow,
-                "26",
-                str(ausgabe_ordner)
-            )
-
-            seed = generate_seed_from_filename(prompt.name)
-
-            workflow = set_noise_seed(
-                workflow,
-                "25",
-                seed
-            )
-
-            workflow = set_filename(
-                workflow,
-                "26",
-                prompt.stem
-            )
-
-            prompt_id = submit_workflow(
-                workflow
-            )
-
-            wait_until_finished(
-                prompt_id
-            )
             if i == 1:
                 intialisierung_zeit = time.perf_counter()
             i += 1

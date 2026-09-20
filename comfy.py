@@ -1,11 +1,22 @@
 # comfy.py
-import requests
 import json
+import subprocess
+import sys
 import time
 import hashlib
-import time
-from config import COMFY_URL
+from datetime import datetime
+from pathlib import Path
+
+import requests
+
 from config import COMFY_URL, PROMPT_FILE
+
+# Verzeichnis, in dem die Einstellungs-Protokolle der Pipeline-Skripte
+# gespeichert werden.
+AUSGABE_DIR = Path(
+    r"C:\Users\Andrin\Documents\Maturaarbeit_W11WS16\parktisches_Experiment\Datensatz\Ausgabedateien"
+)
+
 
 def test_connection():
 
@@ -31,13 +42,7 @@ def test_connection():
 def load_workflow(path: str) -> dict:
     with open(path, "r", encoding="utf-8") as f:
         return json.load(f)
-    
 
-def set_image(workflow: dict, image_name: str) -> dict:
-
-    workflow["13"]["inputs"]["image"] = image_name
-
-    return workflow
 
 def set_image_path(workflow: dict, node_id: str, image_path: str) -> dict:
 
@@ -119,12 +124,6 @@ def set_output_path(workflow: dict, node_id: str, path: str) -> dict:
 
     return workflow
 
-def set_filename(workflow: dict, node_id: str, filename: str) -> dict:
-
-    workflow[node_id]["inputs"]["filename_prefix"] = filename
-
-    return workflow
-
 def set_text_directory(
     workflow: dict,
     node_id: str,
@@ -135,16 +134,6 @@ def set_text_directory(
 
     return workflow
 
-
-def set_text_filename(
-    workflow: dict,
-    node_id: str,
-    filename: str
-) -> dict:
-
-    workflow[node_id]["inputs"]["file"] = filename
-
-    return workflow
 
 def set_text_output_path(
     workflow: dict,
@@ -192,8 +181,6 @@ def generate_seed_from_filename(filename: str) -> int:
     return seed
 
 def _dateien_in_ordner(ordner, muster: list[str]) -> list:
-    from pathlib import Path
-
     ordner = Path(ordner)
     dateien = []
     for m in muster:
@@ -215,8 +202,6 @@ def get_batches(basis_ordner, muster: list[str]) -> list:
 
     Rückgabe: Liste von (batch_name, ordner_pfad)-Tupeln.
     """
-    from pathlib import Path
-
     basis_ordner = Path(basis_ordner)
     batches = []
 
@@ -243,8 +228,6 @@ def ausgabe_ordner_fuer_batch(basis_ordner, batch_name: str):
     Liefert (und erstellt bei Bedarf) den Ausgabeordner für einen Batch:
     Batch-Name "" -> Basisordner selbst; sonst Basisordner/Batch-Name.
     """
-    from pathlib import Path
-
     basis_ordner = Path(basis_ordner)
     ziel = basis_ordner / batch_name if batch_name else basis_ordner
     ziel.mkdir(parents=True, exist_ok=True)
@@ -261,3 +244,96 @@ def print_time(start_zeit,end_zeit,initialisierung):
         print(f"Davon  {stunden} Stunden, {minuten} Minuten, {sekunden:.0f} Sekunden für die Initilasierung und das erste Bild.")
     else:
         print(f"Dauer: {stunden} Stunden, {minuten} Minuten, {sekunden:.0f} Sekunden")
+
+
+def bild_fuer_prompt_generieren(
+    workflow_pfad: str,
+    save_node_id: str,
+    prompt_pfad,
+    ausgabe_ordner,
+    prompt_node_id: str = "6",
+    seed_node_id: str = "25",
+):
+    """
+    Erzeugt genau ein Bild für eine Prompt-Datei: lädt den Workflow,
+    setzt Prompt-Text, Output-Pfad, einen aus dem Dateinamen
+    abgeleiteten Seed und den Dateinamen, sendet den Workflow an
+    ComfyUI und wartet auf Fertigstellung.
+
+    Deckt den Block ab, der bisher in jeder
+    workflow_bild_generieren_*.py-Datei innerhalb der Schleife
+    wortwörtlich identisch stand (nur Workflow-Pfad und Save-Node-ID
+    unterschieden sich). Die Schleife selbst, Fortschrittsausgaben und
+    Zeitmessung bleiben bewusst in den jeweiligen Dateien.
+    """
+    workflow = load_workflow(workflow_pfad)
+
+    prompt_text = prompt_pfad.read_text(encoding="utf-8")
+
+    workflow = set_prompt(workflow, prompt_node_id, prompt_text)
+
+    workflow = set_output_path(workflow, save_node_id, str(ausgabe_ordner))
+
+    seed = generate_seed_from_filename(prompt_pfad.name)
+
+    workflow = set_noise_seed(workflow, seed_node_id, seed)
+
+    workflow = set_filename(workflow, save_node_id, prompt_pfad.stem)
+
+    prompt_id = submit_workflow(workflow)
+
+    wait_until_finished(prompt_id)
+
+
+def hole_einstellung(workflow: dict, node_id: str, feld: str):
+    try:
+        return workflow[node_id]["inputs"][feld]
+    except KeyError:
+        return f"nicht gefunden (Node {node_id} / Feld '{feld}')"
+
+
+def einstellungen_auslesen(workflow: dict, node_map: dict) -> dict:
+    return {
+        label: hole_einstellung(workflow, node_id, feld)
+        for label, (node_id, feld) in node_map.items()
+    }
+
+
+def batches_erfassen(basis_ordner, muster: list) -> dict:
+    batches = get_batches(basis_ordner, muster)
+    eintraege = [
+        {
+            "ordner": batch_name if batch_name else None,
+            "anzahl_dateien": len(get_batch_dateien(batch_ordner, muster)),
+        }
+        for batch_name, batch_ordner in batches
+    ]
+    return {"basis_ordner": str(basis_ordner), "batches": eintraege}
+
+
+def workflow_ausfuehren(script_name: str):
+    print(f"\n>>> Starte {script_name} ...\n")
+    ergebnis = subprocess.run([sys.executable, script_name])
+    if ergebnis.returncode != 0:
+        raise RuntimeError(
+            f"{script_name} wurde mit Fehlercode {ergebnis.returncode} beendet."
+        )
+
+
+def protokoll_speichern(protokoll: dict, name, modell_praefix: str = "einstellungen") -> Path:
+    """
+    Speichert das Protokoll-dict als JSON unter AUSGABE_DIR.
+    Dateiname: <name>.json falls angegeben, sonst
+    <modell_praefix>_<Zeitstempel>.json.
+    """
+    AUSGABE_DIR.mkdir(parents=True, exist_ok=True)
+
+    if name:
+        dateiname = name if name.lower().endswith(".json") else f"{name}.json"
+    else:
+        zeitstempel = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+        dateiname = f"{modell_praefix}_{zeitstempel}.json"
+
+    pfad = AUSGABE_DIR / dateiname
+    pfad.write_text(json.dumps(protokoll, indent=2, ensure_ascii=False), encoding="utf-8")
+    return pfad
