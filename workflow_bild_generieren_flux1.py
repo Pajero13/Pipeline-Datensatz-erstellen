@@ -12,6 +12,7 @@ from comfy import (
     get_batch_dateien,
     ausgabe_ordner_fuer_batch,
     bild_fuer_prompt_generieren,
+    erstbild_dauer_speichern,
     print_time,
     time,
 )
@@ -68,3 +69,4 @@ if __name__ == "__main__":
     end_zeit = time.perf_counter()
     print_time(start_zeit,end_zeit,False)
     print_time(start_zeit,intialisierung_zeit,True)
+    erstbild_dauer_speichern(intialisierung_zeit - start_zeit)

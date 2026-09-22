@@ -234,16 +234,52 @@ def ausgabe_ordner_fuer_batch(basis_ordner, batch_name: str):
     return ziel
 
 
-def print_time(start_zeit,end_zeit,initialisierung):
-    dauer_sekunden = end_zeit - start_zeit
+def format_dauer(dauer_sekunden: float) -> str:
+    """Formatiert eine Sekundenanzahl als 'X Stunden, Y Minuten, Z Sekunden'."""
     stunden = int(dauer_sekunden // 3600)
     minuten = int((dauer_sekunden % 3600) // 60)
     sekunden = dauer_sekunden % 60
+    return f"{stunden} Stunden, {minuten} Minuten, {sekunden:.0f} Sekunden"
+
+
+def print_time(start_zeit,end_zeit,initialisierung):
+    text = format_dauer(end_zeit - start_zeit)
     print()
     if initialisierung:
-        print(f"Davon  {stunden} Stunden, {minuten} Minuten, {sekunden:.0f} Sekunden für die Initilasierung und das erste Bild.")
+        print(f"Davon  {text} für die Initilasierung und das erste Bild.")
     else:
-        print(f"Dauer: {stunden} Stunden, {minuten} Minuten, {sekunden:.0f} Sekunden")
+        print(f"Dauer: {text}")
+
+
+_ZEITEN_DATEI = AUSGABE_DIR / "_zeiten_zwischenspeicher.json"
+
+
+def erstbild_dauer_speichern(dauer_sekunden: float):
+    """
+    Speichert die Dauer bis zum ersten Bild zwischen (in einer
+    kleinen JSON-Datei unter AUSGABE_DIR), damit das aufrufende
+    pipeline_alle_workflows_*.py-Skript - ein separater Prozess - sie
+    anschliessend ins JSON-Protokoll übernehmen kann.
+    """
+    AUSGABE_DIR.mkdir(parents=True, exist_ok=True)
+    _ZEITEN_DATEI.write_text(
+        json.dumps({"dauer_erstes_bild_sekunden": dauer_sekunden}),
+        encoding="utf-8",
+    )
+
+
+def erstbild_dauer_laden():
+    """
+    Liest die von erstbild_dauer_speichern() hinterlegte Dauer bis
+    zum ersten Bild (formatiert wie format_dauer()) und löscht die
+    Zwischendatei danach wieder. Gibt None zurück, falls keine
+    Zwischendatei vorhanden ist.
+    """
+    if not _ZEITEN_DATEI.exists():
+        return None
+    daten = json.loads(_ZEITEN_DATEI.read_text(encoding="utf-8"))
+    _ZEITEN_DATEI.unlink()
+    return format_dauer(daten["dauer_erstes_bild_sekunden"])
 
 
 def bild_fuer_prompt_generieren(

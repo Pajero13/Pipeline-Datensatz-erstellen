@@ -7,9 +7,10 @@
 #   3. workflow_bild_generieren_flux1.py
 #
 # Vor jedem Schritt werden die relevanten Node-Einstellungen sowie
-# die gefundenen Batches (Unterordner) erfasst und am Ende der
-# Pipeline gesammelt als JSON-Protokoll gespeichert (siehe
-# comfy.AUSGABE_DIR).
+# die gefundenen Batches (Unterordner) erfasst, dazu die Dauer jedes
+# Schritts (und beim dritten Schritt zusätzlich die Dauer bis zum
+# ersten Bild) - am Ende der Pipeline gesammelt als JSON-Protokoll
+# gespeichert (siehe comfy.AUSGABE_DIR).
 #
 # Name der Protokoll-Datei:
 #   - ohne Angabe: Zeitstempel
@@ -22,6 +23,7 @@
 # "python workflow_....py" gestartet hast.
 
 import argparse
+import time
 from datetime import datetime
 
 from comfy import (
@@ -30,6 +32,8 @@ from comfy import (
     batches_erfassen,
     workflow_ausfuehren,
     protokoll_speichern,
+    format_dauer,
+    erstbild_dauer_laden,
 )
 from config import (
     WORKFLOW_BILD_SKALIEREN,
@@ -80,44 +84,61 @@ if __name__ == "__main__":
 
     args = parse_args()
 
+    pipeline_start = time.perf_counter()
+
     protokoll = {
         "modell": "flux1",
         "start": datetime.now().isoformat(timespec="seconds"),
         "ende": None,
+        "gesamtdauer": None,
         "workflows": [],
     }
 
     # --- 1. Bild skalieren ---
     workflow = load_workflow(WORKFLOW_BILD_SKALIEREN)
-    protokoll["workflows"].append({
+    eintrag = {
         "workflow": "Bild skalieren",
         "einstellungen": einstellungen_auslesen(workflow, NODES_SKALIEREN),
         "batches": batches_erfassen(INPUT_DIR, BILD_MUSTER),
-    })
+    }
 
+    schritt_start = time.perf_counter()
     workflow_ausfuehren("workflow_bild_skalieren.py")
+    eintrag["dauer"] = format_dauer(time.perf_counter() - schritt_start)
+
+    protokoll["workflows"].append(eintrag)
 
     # --- 2. Prompt generieren ---
     workflow = load_workflow(WORKFLOW_QWEN)
-    protokoll["workflows"].append({
+    eintrag = {
         "workflow": "Prompt generieren",
         "einstellungen": einstellungen_auslesen(workflow, NODES_QWEN),
         "batches": batches_erfassen(PREPROCESSED_DIR, PNG_MUSTER),
-    })
+    }
 
+    schritt_start = time.perf_counter()
     workflow_ausfuehren("workflow_prompt_generieren.py")
+    eintrag["dauer"] = format_dauer(time.perf_counter() - schritt_start)
+
+    protokoll["workflows"].append(eintrag)
 
     # --- 3. Bild generieren (flux1) ---
     workflow = load_workflow(WORKFLOW_FLUX)
-    protokoll["workflows"].append({
+    eintrag = {
         "workflow": "Bild generieren (flux1)",
         "einstellungen": einstellungen_auslesen(workflow, NODES_FLUX1),
         "batches": batches_erfassen(PROMPTS_DIR, TXT_MUSTER),
-    })
+    }
 
+    schritt_start = time.perf_counter()
     workflow_ausfuehren("workflow_bild_generieren_flux1.py")
+    eintrag["dauer"] = format_dauer(time.perf_counter() - schritt_start)
+    eintrag["dauer_erstes_bild"] = erstbild_dauer_laden()
+
+    protokoll["workflows"].append(eintrag)
 
     protokoll["ende"] = datetime.now().isoformat(timespec="seconds")
+    protokoll["gesamtdauer"] = format_dauer(time.perf_counter() - pipeline_start)
 
     pfad = protokoll_speichern(protokoll, args.name, modell_praefix="einstellungen_flux1")
     print(f"\nProtokoll gespeichert unter: {pfad}")
